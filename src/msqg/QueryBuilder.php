@@ -151,4 +151,53 @@
 
             return $Query . ';';
         }
+
+        /**
+         * Generates a INSERT INTO Query
+         *
+         * @param string $table
+         * @param array $key_values
+         * @return string
+         */
+        public static function insert_into(string $table, array $values): string
+        {
+            $Keys = '';
+            $Values = '';
+
+            $is_first = true;
+            foreach($values as $key => $value)
+            {
+                if($is_first == true)
+                {
+                    $Keys .= $key;
+
+                    if(is_int($value))
+                    {
+                        $Values .= (int)$value;
+                    }
+                    else
+                    {
+                        $Values .= "'$value'";
+                    }
+
+                    $is_first = false;
+                }
+                else
+                {
+                    $Keys .= ', ' . $key;
+
+                    if(is_int($value))
+                    {
+                        $Values .= ', ' . (int)$value;
+                    }
+                    else
+                    {
+                        $Values .= ", '$value'";
+                    }
+                }
+            }
+
+            /** @noinspection SqlNoDataSourceInspection */
+            return "INSERT INTO `$table` ($Keys) VALUES ($Values);";
+        }
     }
