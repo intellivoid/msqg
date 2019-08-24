@@ -15,9 +15,64 @@
     {
 
         /**
-         * Generates a SELECT query
+         * Generates a safe SELECT query
          *
          * @param mysqli $mysqli
+         * @param string $table
+         * @param array $values
+         * @param string|null $where
+         * @param string|null $where_value
+         * @param string|null $order_by
+         * @param string|null $sort_by
+         * @param int|null $limit
+         * @param int|null $limit_offset
+         * @return string
+         */
+        public static function s_select(
+            mysqli $mysqli, string $table,
+            array $values = [],
+            string $where = null, string $where_value = null,
+            string $order_by = null, string $sort_by = null,
+            int $limit = null, int $limit_offset = null
+        ): string
+        {
+            $table = $mysqli->real_escape_string($table);
+
+            $x_values = [];
+            foreach($values as $value)
+            {
+                array_push($x_values, $mysqli->real_escape_string($value));
+            }
+            $values = $x_values;
+
+            if($where != null)
+            {
+                $where = $mysqli->real_escape_string($where);
+            }
+
+            if($where_value != null)
+            {
+                $where_value = $mysqli->real_escape_string($where_value);
+            }
+
+            if($order_by != null)
+            {
+                $order_by = $mysqli->real_escape_string($order_by);
+            }
+
+            if($sort_by != null)
+            {
+                $sort_by = $mysqli->real_escape_string($sort_by);
+            }
+
+            return self::select(
+                $table, $values, $where, $where_value, $order_by, $sort_by, $limit, $limit_offset
+            );
+        }
+
+        /**
+         * Generates a SELECT query
+         *
          * @param string $table
          * @param array $values
          * @param string|null $where
@@ -29,14 +84,13 @@
          * @return string
          */
         public static function select(
-            mysqli $mysqli, string $table,
+            string $table,
             array $values = [],
             string $where = null, string $where_value = null,
             string $order_by = null, string $sort_by = null,
             int $limit = null, int $limit_offset = null
         ): string
         {
-            $table = $mysqli->real_escape_string($table);
             $selected_values = '';
 
             if(count($values) == 0)
@@ -50,12 +104,12 @@
                 {
                     if($is_first == true)
                     {
-                        $selected_values .= $mysqli->real_escape_string($value);
+                        $selected_values .= $value;
                         $is_first = false;
                     }
                     else
                     {
-                        $selected_values .= ', ' . $mysqli->real_escape_string($value);
+                        $selected_values .= ', ' . $value;
                     }
                 }
             }
@@ -67,8 +121,6 @@
             {
                 if($where_value != null)
                 {
-                    $where = $mysqli->real_escape_string($where);
-                    $where_value = $mysqli->real_escape_string($where_value);
                     $Query .= " WHERE $where='$where_value'";
                 }
             }
@@ -77,11 +129,11 @@
             {
                 if($sort_by !=null)
                 {
-                    $Query .= " ORDER BY " . $mysqli->real_escape_string($order_by) . ' ' . strtoupper($sort_by);
+                    $Query .= " ORDER BY " . $order_by . ' ' . strtoupper($sort_by);
                 }
                 else
                 {
-                    $Query .= " ORDER BY " . $mysqli->real_escape_string($order_by);
+                    $Query .= " ORDER BY " . $order_by;
                 }
             }
 
