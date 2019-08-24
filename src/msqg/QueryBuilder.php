@@ -3,7 +3,6 @@
 
     namespace msqg;
 
-
     use msqg\Abstracts\SortBy;
     use mysqli;
 
@@ -166,7 +165,7 @@
             
             $x_values = array();
             
-            foreach($x_values as $key => $value)
+            foreach($values as $key => $value)
             {
                 if(is_int($value))
                 {
@@ -185,7 +184,7 @@
          * Generates a INSERT INTO Query
          *
          * @param string $table
-         * @param array $key_values
+         * @param array $values
          * @return string
          */
         public static function insert_into(string $table, array $values): string
@@ -228,5 +227,109 @@
 
             /** @noinspection SqlNoDataSourceInspection */
             return "INSERT INTO `$table` ($Keys) VALUES ($Values);";
+        }
+
+        /**
+         * Generates a safe UPDATE query
+         *
+         * @param mysqli $mysqli
+         * @param string $table
+         * @param array $values
+         * @param string|null $where
+         * @param null $where_value
+         * @return string
+         */
+        public static function s_update(mysqli $mysqli, string $table, array $values, string $where = null, $where_value = null): string
+        {
+            $table = $mysqli->real_escape_string($table);
+
+            $x_values = array();
+            foreach($values as $key => $value)
+            {
+                if(is_int($value))
+                {
+                    $x_values[$mysqli->real_escape_string($key)] = (int)$value;
+                }
+                else
+                {
+                    $x_values[$mysqli->real_escape_string($key)] = $mysqli->real_escape_string($value);
+                }
+            }
+
+            if($where != null)
+            {
+                $where = $mysqli->real_escape_string($where);
+            }
+
+            if($where_value != null)
+            {
+                if(is_int($where_value) == false)
+                {
+                    $where_value = $mysqli->real_escape_string($where_value);
+                }
+            }
+
+            return self::update($table, $x_values, $where, $where_value);
+        }
+
+        /**
+         * Generates a UPDATE query
+         *
+         * @param string $table
+         * @param array $values
+         * @param string|null $where
+         * @param string|int|null $where_value
+         * @return string
+         */
+        public static function update(string $table, array $values, string $where = null, $where_value = null): string
+        {
+            /** @noinspection SqlNoDataSourceInspection */
+            $Query = "UPDATE `$table` SET ";
+
+            $first_value = true;
+            foreach($values as $key => $value)
+            {
+                if($first_value == true)
+                {
+                    if(is_int($value))
+                    {
+                        $Query .= $key . '=' . (int)$value;
+                    }
+                    else
+                    {
+                        $Query .= $key . '=' . "'$value'";
+                    }
+
+                    $first_value = false;
+                }
+                else
+                {
+                    if(is_int($value))
+                    {
+                        $Query .= ', ' . $key . '=' . (int)$value;
+                    }
+                    else
+                    {
+                        $Query .= ', ' . $key . '=' . "'$value'";
+                    }
+                }
+            }
+
+            if($where != null)
+            {
+                if($where_value != null)
+                {
+                    if(is_int($where_value))
+                    {
+                        $Query .= " WHERE $where=" . (int)$where_value;
+                    }
+                    else
+                    {
+                        $Query .= " WHERE $where='$where_value'";
+                    }
+                }
+            }
+
+            return $Query . ';';
         }
     }

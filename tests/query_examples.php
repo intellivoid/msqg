@@ -21,3 +21,13 @@
         )
     );
     print($Query . PHP_EOL . PHP_EOL . PHP_EOL);
+
+
+    $Query = \msqg\QueryBuilder::update(
+        'users', array(
+            'username' => "NewUsername",
+            'password' => "NewPassword"
+        ),
+        "id", "test"
+    );
+    print($Query . PHP_EOL . PHP_EOL . PHP_EOL);
