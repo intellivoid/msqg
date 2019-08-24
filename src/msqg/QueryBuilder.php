@@ -153,6 +153,35 @@
         }
 
         /**
+         * Generates a safe INSERT INTO Query
+         *
+         * @param mysqli $mysqli
+         * @param string $table
+         * @param array $values
+         * @return string
+         */
+        public static function s_insert_into(mysqli $mysqli, string $table, array $values): string
+        {
+            $table = $mysqli->real_escape_string($table);
+            
+            $x_values = array();
+            
+            foreach($x_values as $key => $value)
+            {
+                if(is_int($value))
+                {
+                    $x_values[$mysqli->real_escape_string($key)] = (int)$value;
+                }
+                else
+                {
+                    $x_values[$mysqli->real_escape_string($key)] = $mysqli->real_escape_string($value);
+                }
+            }
+
+            return self::insert_into($table, $x_values);
+        }
+
+        /**
          * Generates a INSERT INTO Query
          *
          * @param string $table
