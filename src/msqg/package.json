@@ -1,0 +1,23 @@
+{
+    "package": {
+        "package_name": "net.intellivoid.msqg",
+        "name": "MySQL Query Generator Library",
+        "version": "1.0.0.2",
+        "author": "Zi Xing Narrakas",
+        "organization": "Intellivoid",
+        "description": "A library for generating MySQL queries",
+        "url": "https://github.com/intellivoid/msqg",
+        "dependencies": [],
+        "configuration": {
+            "autoload_method": "indexed",
+            "main": null,
+            "post_installation": [],
+            "pre_installation": []
+        }
+    },
+    "components": [
+        {"required": true, "file": "Abstracts/SortBy.php"},
+        {"required": true, "file": "msqg.php"},
+        {"required": true, "file": "QueryBuilder.php"}
+    ]
+}
