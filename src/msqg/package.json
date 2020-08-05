@@ -16,8 +16,20 @@
         }
     },
     "components": [
-        {"required": true, "file": "Abstracts/SortBy.php"},
-        {"required": true, "file": "msqg.php"},
-        {"required": true, "file": "QueryBuilder.php"}
+        {
+            "required": true,
+            "file": "Abstracts/SortBy.php"
+        },
+        {
+            "required": true,
+            "file": "msqg.php"
+        },
+        {
+            "required": true,
+            "file": "QueryBuilder.php"
+        }
+    ],
+    "files": [
+        "package.json"
     ]
 }
